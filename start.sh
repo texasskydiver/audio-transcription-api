@@ -1,4 +1,6 @@
 #!/bin/sh
+printenv
+
 echo "PORT is: $PORT"
 if [ -z "$PORT" ]; then
   echo "PORT environment variable is not set!"

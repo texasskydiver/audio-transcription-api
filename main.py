@@ -39,12 +39,18 @@ async def verify_api_key(api_key: str = Depends(api_key_header)):
 def setup_ffmpeg():
     ffmpeg_dir = os.path.join(os.path.dirname(__file__), "ffmpeg")
     ffmpeg_bin = os.path.join(ffmpeg_dir, "bin")
-    ffmpeg_exe = os.path.join(ffmpeg_bin, "ffmpeg.exe")
+    ffmpeg_exe = os.path.join(ffmpeg_bin, "ffmpeg")  # Use Linux binary name
     
     # Check if FFmpeg is already set up
     if os.path.exists(ffmpeg_exe):
         print("FFmpeg already installed locally")
         os.environ["PATH"] = ffmpeg_bin + os.pathsep + os.environ["PATH"]
+        # Ensure executable permission
+        try:
+            os.chmod(ffmpeg_exe, 0o755)
+            print("FFmpeg permissions set to executable.")
+        except Exception as e:
+            print(f"Failed to set FFmpeg permissions: {e}")
         return
         
     print("Setting up FFmpeg locally...")
@@ -54,7 +60,7 @@ def setup_ffmpeg():
     
     # Download FFmpeg
     zip_path = os.path.join(ffmpeg_dir, "ffmpeg.zip")
-    url = "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip"
+    url = "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.zip"
     
     print("Downloading FFmpeg...")
     urllib.request.urlretrieve(url, zip_path)
@@ -64,7 +70,7 @@ def setup_ffmpeg():
         zip_ref.extractall(ffmpeg_dir)
     
     # Move files from nested directory to main ffmpeg directory
-    nested_dir = os.path.join(ffmpeg_dir, "ffmpeg-master-latest-win64-gpl")
+    nested_dir = os.path.join(ffmpeg_dir, "ffmpeg-master-latest-linux64-gpl")
     for item in os.listdir(nested_dir):
         shutil.move(os.path.join(nested_dir, item), os.path.join(ffmpeg_dir, item))
     
@@ -74,6 +80,12 @@ def setup_ffmpeg():
     
     # Add FFmpeg to PATH
     os.environ["PATH"] = ffmpeg_bin + os.pathsep + os.environ["PATH"]
+    # Ensure executable permission
+    try:
+        os.chmod(ffmpeg_exe, 0o755)
+        print("FFmpeg permissions set to executable.")
+    except Exception as e:
+        print(f"Failed to set FFmpeg permissions: {e}")
     print("FFmpeg setup complete")
 
 # Run FFmpeg setup

@@ -19,5 +19,5 @@ RUN chmod +x start.sh
 # Expose port (Railway uses $PORT)
 EXPOSE 8000
 
-# Start the app using the entrypoint script
-CMD ["./start.sh"] 
+# Start the app using the entrypoint script (shell form for env var expansion)
+CMD ./start.sh 
